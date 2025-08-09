@@ -1,15 +1,20 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 
 [BurstCompile]
 partial class ShooterSystem : SystemBase
 {
     private float fireRateTimer = 0;
+    private EntityBakeryAuthoring entityBakery;
+
+    [BurstCompile]
+    protected override void OnStartRunning()
+    {
+        entityBakery = GameManager.Instance.GetComponent<EntityBakeryAuthoring>();
+    }
     [BurstCompile]
     protected override void OnUpdate()
     {
@@ -36,23 +41,34 @@ partial class ShooterSystem : SystemBase
             fireRateTimer += SystemAPI.Time.DeltaTime;
             if (fireRateTimer < GameManager.Instance.RateOfFire) return;
             fireRateTimer = 0;
-            EntityCommandBuffer ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(CheckedStateRef.WorldUnmanaged);
-            Entity bulletEntity = ecb.Instantiate(SystemAPI.GetSingleton<EntityBakeryComponent>().bullet);
-            ecb.AddComponent(bulletEntity, new LocalTransform
+            if(GameManager.Instance.useEntity)
             {
-                Position = GameManager.Instance.mainCam.ScreenToWorldPoint(Input.mousePosition),
-                Rotation = GameManager.Instance.mainCamTransform.rotation,
-                Scale = 1
-            });
-            ecb.AddComponent(bulletEntity, new PhysicsVelocity
+                EntityCommandBuffer ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(CheckedStateRef.WorldUnmanaged);
+                Entity bulletEntity = ecb.Instantiate(SystemAPI.GetSingleton<EntityBakeryComponent>().bullet);
+                ecb.AddComponent(bulletEntity, new LocalTransform
+                {
+                    Position = GameManager.Instance.mainCam.ScreenToWorldPoint(Input.mousePosition),
+                    Rotation = GameManager.Instance.mainCamTransform.rotation,
+                    Scale = 1
+                });
+                ecb.AddComponent(bulletEntity, new PhysicsVelocity
+                {
+                    Linear = GameManager.Instance.mainCamTransform.forward * GameManager.Instance.bulletSpeed,
+                    Angular = 0
+                });
+                ecb.AddComponent(bulletEntity, new LifeTimeComponent
+                {
+                    lifeTimer = 2f // Set lifetime to 5 seconds
+                });
+            }
+            else
             {
-                Linear = GameManager.Instance.mainCamTransform.forward * GameManager.Instance.bulletSpeed,
-                Angular = 0
-            });
-            ecb.AddComponent(bulletEntity, new LifeTimeComponent
-            {
-                lifeTimer = 2f // Set lifetime to 5 seconds
-            });
+                GameObject.Instantiate(
+                    entityBakery.bulletPrefab,
+                    GameManager.Instance.mainCam.ScreenToWorldPoint(Input.mousePosition),
+                    GameManager.Instance.mainCamTransform.rotation
+                ).GetComponent<Rigidbody>().linearVelocity = GameManager.Instance.mainCamTransform.forward * GameManager.Instance.bulletSpeed;
+            }
         }
     }
 }

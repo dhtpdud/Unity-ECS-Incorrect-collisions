@@ -558,6 +558,7 @@ MonoBehaviour:
   moveSpeed: 0.5
   bulletSpeed: 200
   RateOfFire: 0.02
+  useEntity: 1
 --- !u!1 &547010788
 GameObject:
   m_ObjectHideFlags: 0

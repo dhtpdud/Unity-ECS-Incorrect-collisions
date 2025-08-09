@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public float moveSpeed = 5;
     public float bulletSpeed = 200;
     public float RateOfFire = 0.05f;
+    public bool useEntity;
+
     private void Awake()
     {
         mainCam = Camera.main;
