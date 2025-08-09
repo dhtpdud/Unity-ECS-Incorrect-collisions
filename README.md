@@ -1,8 +1,8 @@
 https://youtu.be/dzYFJhkGTRk?si=jUwRYj3z--ia9aav
 
-Left Click = Fire
-WASD = Move
-Q = Move Down
+Left Click = Fire  
+WASD = Move  
+Q = Move Down  
 E = Move Up
 
 Unity 6000.0.41f1  
