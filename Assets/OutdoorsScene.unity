@@ -557,7 +557,7 @@ MonoBehaviour:
   mainCamTransform: {fileID: 0}
   moveSpeed: 0.5
   bulletSpeed: 200
-  RateOfFire: 0.05
+  RateOfFire: 0.02
 --- !u!1 &547010788
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,6 +35,7 @@ partial class ShooterSystem : SystemBase
         {
             fireRateTimer += SystemAPI.Time.DeltaTime;
             if (fireRateTimer < GameManager.Instance.RateOfFire) return;
+            fireRateTimer = 0;
             EntityCommandBuffer ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(CheckedStateRef.WorldUnmanaged);
             Entity bulletEntity = ecb.Instantiate(SystemAPI.GetSingleton<EntityBakeryComponent>().bullet);
             ecb.AddComponent(bulletEntity, new LocalTransform
