@@ -4,7 +4,6 @@ using Unity.Physics;
 using Unity.Transforms;
 using UnityEngine;
 
-[BurstCompile]
 partial class ShooterSystem : SystemBase
 {
     private float fireRateTimer = 0;
